@@ -23,6 +23,6 @@ public class FlowTest {
                 .of(PassThroughProcessor.getInstance())
                 .out(PassThroughProcessor.DEFAULT_EGRESS, f1);
 
-        assertSame(f1, f2.getEgress(PassThroughProcessor.DEFAULT_EGRESS));
+        assertSame(f1, f2.getNextStep(PassThroughProcessor.DEFAULT_EGRESS));
     }
 }

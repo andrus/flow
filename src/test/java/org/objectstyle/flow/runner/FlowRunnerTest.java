@@ -9,7 +9,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FlowRunnerTest {
 
     @Test
-    public void testRun_Sequential() {
+    public void testRun_Sequential_DefaultEgress() {
+        Flow f = Flow
+                .of((i, c) -> c.setOutput(i + "_one"))
+                .out((i, c) -> c.setOutput(i + "_two"));
+
+        String result = FlowRunner.of(f).run("a");
+        assertEquals("a_one_two", result);
+    }
+
+    @Test
+    public void testRun_Sequential_NamedEgress() {
         Flow f = Flow
                 .of((i, c) -> c.setEgress("next").setOutput(i + "_one"))
                 .out("next", (i, c) -> c.setOutput(i + "_two"));

@@ -37,8 +37,14 @@ public class FlowRunner {
         StepProcessor processor = flow.getProcessor();
         processor.run(input, context);
         String egress = context.getEgress();
-        return (egress != null)
-                ? runOne(flow.getEgress(egress), context.getOutput(), context.cloneAttributes())
+
+        // note that named egress will be present, or an exception is thrown. While default egress may be null
+        // TODO: StepProcessor should define a set of supported egress names (including the default), so that we can
+        //  tell the difference between a wrong name and no routing
+        Flow nextStep = egress != null ? flow.getNextStep(egress) : flow.getDefaultNextStep();
+
+        return (nextStep != null)
+                ? runOne(nextStep, context.getOutput(), context.cloneAttributes())
                 : context.getOutput();
     }
 }

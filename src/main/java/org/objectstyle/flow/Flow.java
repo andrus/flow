@@ -1,31 +1,38 @@
 package org.objectstyle.flow;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Flow {
 
     private final StepProcessor<?> processor;
-    private final Map<String, Flow> egresses;
+    private final Map<String, Flow> namedEgresses;
+    private final Flow defaultEgress;
 
-    protected Flow(StepProcessor<?> processor, Map<String, Flow> egresses) {
+    protected Flow(StepProcessor<?> processor, Flow defaultEgress, Map<String, Flow> namedEgresses) {
         this.processor = Objects.requireNonNull(processor);
-        this.egresses = Objects.requireNonNull(egresses);
+        this.defaultEgress = defaultEgress;
+        this.namedEgresses = Objects.requireNonNull(namedEgresses);
     }
 
     public static Flow of(StepProcessor<?> processor) {
-        return new Flow(processor, Collections.emptyMap());
+        return new Flow(processor, null, Collections.emptyMap());
+    }
+
+    public Flow out(Flow subFlow) {
+        return new Flow(processor, subFlow, namedEgresses);
     }
 
     public Flow out(String egress, Flow subFlow) {
 
-        Map<String, Flow> egresses = new HashMap<>((int) ((this.egresses.size() + 2) / 0.75));
-        egresses.putAll(this.egresses);
+        Map<String, Flow> egresses = new HashMap<>((int) ((this.namedEgresses.size() + 2) / 0.75));
+        egresses.putAll(this.namedEgresses);
         egresses.put(egress, subFlow);
 
-        return new Flow(processor, egresses);
+        return new Flow(processor, defaultEgress, egresses);
+    }
+
+    public Flow out(StepProcessor<?> subProcessor) {
+        return out(Flow.of(subProcessor));
     }
 
     public Flow out(String egress, StepProcessor<?> subProcessor) {
@@ -36,10 +43,14 @@ public class Flow {
         return processor;
     }
 
-    public Flow getEgress(String name) {
-        Flow egress = egresses.get(name);
+    public Flow getDefaultNextStep() {
+        return defaultEgress;
+    }
+
+    public Flow getNextStep(String egressName) {
+        Flow egress = namedEgresses.get(egressName);
         if (egress == null) {
-            throw new IllegalArgumentException("No such egress: " + name);
+            throw new IllegalArgumentException("No such egress: " + egressName);
         }
 
         return egress;
