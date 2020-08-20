@@ -9,7 +9,7 @@ public interface StepProcessor<T> {
      * Runs a flow step.
      *
      * @param input   step input
-     * @param context a mutable map of values that allows to pass data between the steps.
+     * @param context a mutable map of values that allows to pass data between the steps and route further execution.
      */
     void run(T input, StepContext context);
 }

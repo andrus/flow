@@ -1,58 +1,26 @@
 package org.objectstyle.flow;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
-public class StepContext {
+public interface StepContext {
 
-    private Object output;
-    private String egress;
-    private Map<String, Object> attributes;
-
-    public StepContext(Map<String, Object> attributes) {
-        // clone the map, as the context is mutable
-        this.attributes = new HashMap<>(attributes);
+    default <T> T getAttribute(String name) {
+        return getAttribute(name, null);
     }
 
-    public StepContext cloneAttributes() {
-        return new StepContext(attributes);
-    }
+    <T> T getAttribute(String name, T defaultValue);
 
-    public <T> T getAttribute(String name) {
-        return (T) attributes.get(name);
-    }
+    StepContext setAttribute(String name, Object value);
 
-    public <T> T getAttribute(String name, T defaultValue) {
-        return (T) attributes.getOrDefault(name, defaultValue);
-    }
+    StepContext setAttributeIfAbsent(String name, Function<String, ?> mappingFunction);
 
-    public StepContext setAttribute(String name, Object value) {
-        attributes.put(name, value);
-        return this;
-    }
+    StepContext setOutput(Object output);
 
-    public StepContext setAttributeIfAbsent(String name, Function<String, ?> mappingFunction) {
-        attributes.computeIfAbsent(name, mappingFunction);
-        return this;
-    }
-
-    public StepContext setOutput(Object output) {
-        this.output = output;
-        return this;
-    }
-
-    public Object getOutput() {
-        return output;
-    }
-
-    public StepContext setEgress(String egress) {
-        this.egress = egress;
-        return this;
-    }
-
-    public String getEgress() {
-        return egress;
-    }
+    /**
+     * Sets a named egress for the processor. If not set or null, a default egress is assumed.
+     *
+     * @param egress Egress name
+     * @return this context
+     */
+    StepContext setEgress(String egress);
 }

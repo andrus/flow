@@ -1,7 +1,6 @@
 package org.objectstyle.flow.runner;
 
 import org.objectstyle.flow.Flow;
-import org.objectstyle.flow.StepContext;
 import org.objectstyle.flow.StepProcessor;
 
 import java.util.HashMap;
@@ -29,11 +28,11 @@ public class FlowRunner {
 
     // TODO: return result object with metrics and attributes
     public <T> T run(Object input) {
-        StepContext context = new StepContext(startAttributes);
+        DefaultStepContext context = new DefaultStepContext(startAttributes);
         return (T) runOne(flow, input, context);
     }
 
-    protected Object runOne(Flow flow, Object input, StepContext context) {
+    protected Object runOne(Flow flow, Object input, DefaultStepContext context) {
         StepProcessor processor = flow.getProcessor();
         processor.run(input, context);
         String egress = context.getEgress();
@@ -44,7 +43,7 @@ public class FlowRunner {
         Flow nextStep = egress != null ? flow.getNextStep(egress) : flow.getDefaultNextStep();
 
         return (nextStep != null)
-                ? runOne(nextStep, context.getOutput(), context.cloneAttributes())
+                ? runOne(nextStep, context.getOutput(), context.newWithClonedAttributes())
                 : context.getOutput();
     }
 }
