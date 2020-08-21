@@ -40,7 +40,7 @@ public class FlowRunner {
         // note that named egress will be present, or an exception is thrown. While default egress may be null
         // TODO: StepProcessor should define a set of supported egress names (including the default), so that we can
         //  tell the difference between a wrong name and no routing
-        Flow nextStep = egress != null ? flow.getNextStep(egress) : flow.getDefaultNextStep();
+        Flow nextStep = egress != null ? flow.getEgress(egress) : flow.getDefaultEgress();
 
         return (nextStep != null)
                 ? runOne(nextStep, context.getOutput(), context.newWithClonedAttributes())

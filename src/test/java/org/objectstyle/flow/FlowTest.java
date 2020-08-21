@@ -19,6 +19,6 @@ public class FlowTest {
     public void testOut() {
         Flow f1 = Flow.of((i, c) -> c.setOutput(i));
         Flow f2 = Flow.of((i, c) -> c.setOutput(i)).out(f1);
-        assertSame(f1, f2.getDefaultNextStep());
+        assertSame(f1, f2.getDefaultEgress());
     }
 }
