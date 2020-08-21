@@ -9,8 +9,6 @@ import java.util.*;
  */
 public class Flow {
 
-    static final String DEFAULT_EGRESS = "_default_";
-
     private final StepProcessor<?> processor;
     private final Map<String, Flow> namedEgresses;
     private final Flow defaultEgress;
@@ -49,7 +47,7 @@ public class Flow {
      */
     public Flow egress(String egressName, Flow subFlow) {
 
-        Map<String, Flow> egresses = new HashMap<>((int) ((this.namedEgresses.size() + 2) / 0.75));
+        Map<String, Flow> egresses = new LinkedHashMap<>((int) ((this.namedEgresses.size() + 2) / 0.75));
         egresses.putAll(this.namedEgresses);
         egresses.put(egressName, subFlow);
 
@@ -81,23 +79,24 @@ public class Flow {
         return egress;
     }
 
+    /**
+     * Accepts a visitor passing it to this and each child flow node in a depth-first manner.
+     *
+     * @param visitor custom flow node visitor
+     */
     public void accept(FlowVisitor visitor) {
-        accept(visitor, new LinkedList<>());
+        accept(visitor, FlowPath.root());
     }
 
-    protected void accept(FlowVisitor visitor, LinkedList<String> path) {
-        visitor.visitNode(this, path);
+    protected void accept(FlowVisitor visitor, FlowPath path) {
+        visitor.onFlowNode(this, path);
 
         if (defaultEgress != null) {
-            path.addLast(DEFAULT_EGRESS);
-            defaultEgress.accept(visitor, path);
-            path.removeLast();
+            defaultEgress.accept(visitor, path.subpath(FlowPath.DEFAULT_EGRESS));
         }
 
         for (Map.Entry<String, Flow> e : namedEgresses.entrySet()) {
-            path.addLast(e.getKey());
-            e.getValue().accept(visitor, path);
-            path.removeLast();
+            e.getValue().accept(visitor, path.subpath(e.getKey()));
         }
     }
 }

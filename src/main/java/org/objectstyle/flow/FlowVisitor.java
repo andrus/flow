@@ -1,8 +1,9 @@
 package org.objectstyle.flow;
 
-import java.util.List;
-
+/**
+ * Allows to traverse the flow
+ */
 public interface FlowVisitor {
 
-    void visitNode(Flow node, List<String> path);
+    void onFlowNode(Flow node, FlowPath path);
 }
