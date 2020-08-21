@@ -27,8 +27,7 @@ public class Flow {
     }
 
     /**
-     * Specifies flow continuation that should be called after this processor is executed, when the processor didn't
-     * specify an explicit egress.
+     * Creates a new flow, connecting the default unnamed egress of this flow with another flow.
      *
      * @param subFlow an egress flow called when an unnamed egress is requested
      * @return a copy of this Flow object connected to provided egress flow.
@@ -38,8 +37,7 @@ public class Flow {
     }
 
     /**
-     * Specifies flow continuation that will be called after this processor is executed, when the processor explicitly
-     * requested an egress with this name.
+     * Creates a new flow, connecting a named egress of this flow with another flow.
      *
      * @param egressName the name of the egress for the sub flow.
      * @param subFlow    an egress flow called when an egress with name is requested
