@@ -9,6 +9,8 @@ import java.util.*;
  */
 public class Flow {
 
+    static final String DEFAULT_EGRESS = "_default_";
+
     private final StepProcessor<?> processor;
     private final Map<String, Flow> namedEgresses;
     private final Flow defaultEgress;
@@ -77,5 +79,25 @@ public class Flow {
         }
 
         return egress;
+    }
+
+    public void accept(FlowVisitor visitor) {
+        accept(visitor, new LinkedList<>());
+    }
+
+    protected void accept(FlowVisitor visitor, LinkedList<String> path) {
+        visitor.visitNode(this, path);
+
+        if (defaultEgress != null) {
+            path.addLast(DEFAULT_EGRESS);
+            defaultEgress.accept(visitor, path);
+            path.removeLast();
+        }
+
+        for (Map.Entry<String, Flow> e : namedEgresses.entrySet()) {
+            path.addLast(e.getKey());
+            e.getValue().accept(visitor, path);
+            path.removeLast();
+        }
     }
 }
