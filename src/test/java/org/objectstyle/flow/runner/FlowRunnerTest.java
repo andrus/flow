@@ -11,8 +11,8 @@ public class FlowRunnerTest {
     @Test
     public void testRun_Sequential_DefaultEgress() {
         Flow f = Flow
-                .of((i, c) -> c.setOutput(i + "_one"))
-                .out((i, c) -> c.setOutput(i + "_two"));
+                .of((i, c) -> c.proceed(i + "_one"))
+                .egress((i, c) -> c.proceed(i + "_two"));
 
         String result = FlowRunner.of(f).run("a");
         assertEquals("a_one_two", result);
@@ -21,8 +21,8 @@ public class FlowRunnerTest {
     @Test
     public void testRun_Sequential_NamedEgress() {
         Flow f = Flow
-                .of((i, c) -> c.setEgress("next").setOutput(i + "_one"))
-                .out("next", (i, c) -> c.setOutput(i + "_two"));
+                .of((i, c) -> c.proceed(i + "_one", "next"))
+                .egress("next", (i, c) -> c.proceed(i + "_two"));
 
         String result = FlowRunner.of(f).run("a");
         assertEquals("a_one_two", result);
@@ -31,11 +31,11 @@ public class FlowRunnerTest {
     @Test
     public void testRun_Conditional() {
 
-        StepProcessor<Integer> oddEvenSplitter = (i, c) -> c.setEgress(i % 2 == 0 ? "even" : "odd").setOutput(i);
+        StepProcessor<Integer> oddEvenSplitter = (i, c) -> c.proceed(i, i % 2 == 0 ? "even" : "odd");
         Flow f = Flow
                 .of(oddEvenSplitter)
-                .out("odd", (i, c) -> c.setOutput(i + " is odd"))
-                .out("even", (i, c) -> c.setOutput(i + " is even"));
+                .egress("odd", (i, c) -> c.proceed(i + " is odd"))
+                .egress("even", (i, c) -> c.proceed(i + " is even"));
 
         FlowRunner runner = FlowRunner.of(f);
 

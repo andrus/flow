@@ -35,7 +35,7 @@ public class FlowRunner {
     protected Object runOne(Flow flow, Object input, DefaultStepContext context) {
         StepProcessor processor = flow.getProcessor();
         processor.run(input, context);
-        String egress = context.getEgress();
+        String egress = context.getEgressName();
 
         // note that named egress will be present, or an exception is thrown. While default egress may be null
         // TODO: StepProcessor should define a set of supported egress names (including the default), so that we can

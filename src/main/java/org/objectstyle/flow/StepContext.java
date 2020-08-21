@@ -14,13 +14,9 @@ public interface StepContext {
 
     StepContext setAttributeIfAbsent(String name, Function<String, ?> mappingFunction);
 
-    StepContext setOutput(Object output);
+    default StepContext proceed(Object output) {
+        return proceed(output, null);
+    }
 
-    /**
-     * Sets a named egress for the processor. If not set or null, a default egress is assumed.
-     *
-     * @param egress Egress name
-     * @return this context
-     */
-    StepContext setEgress(String egress);
+    StepContext proceed(Object output, String egressName);
 }

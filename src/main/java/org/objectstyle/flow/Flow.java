@@ -27,38 +27,39 @@ public class Flow {
     }
 
     /**
-     * Specifies flow continuation that will be called after this step, if the step requested an unnamed egress.
+     * Specifies flow continuation that should be called after this processor is executed, when the processor didn't
+     * specify an explicit egress.
      *
      * @param subFlow an egress flow called when an unnamed egress is requested
-     * @return a copy of this Flow object connected to specified egress flow.
+     * @return a copy of this Flow object connected to provided egress flow.
      */
-    public Flow out(Flow subFlow) {
+    public Flow egress(Flow subFlow) {
         return new Flow(processor, subFlow, namedEgresses);
     }
 
     /**
-     * Specifies flow continuation that will be called after this step, if the step requested an egress with the
-     * specified name.
+     * Specifies flow continuation that will be called after this processor is executed, when the processor explicitly
+     * requested an egress with this name.
      *
-     * @param egress  the name of the egress for the sub flow.
-     * @param subFlow an egress flow called when an egress with name is requested
-     * @return a copy of this Flow object connected to specified named egress flow.
+     * @param egressName the name of the egress for the sub flow.
+     * @param subFlow    an egress flow called when an egress with name is requested
+     * @return a copy of this Flow object connected to provided egress flow.
      */
-    public Flow out(String egress, Flow subFlow) {
+    public Flow egress(String egressName, Flow subFlow) {
 
         Map<String, Flow> egresses = new HashMap<>((int) ((this.namedEgresses.size() + 2) / 0.75));
         egresses.putAll(this.namedEgresses);
-        egresses.put(egress, subFlow);
+        egresses.put(egressName, subFlow);
 
         return new Flow(processor, defaultEgress, egresses);
     }
 
-    public Flow out(StepProcessor<?> subProcessor) {
-        return out(Flow.of(subProcessor));
+    public Flow egress(StepProcessor<?> subProcessor) {
+        return egress(Flow.of(subProcessor));
     }
 
-    public Flow out(String egress, StepProcessor<?> subProcessor) {
-        return out(egress, Flow.of(subProcessor));
+    public Flow egress(String egressName, StepProcessor<?> subProcessor) {
+        return egress(egressName, Flow.of(subProcessor));
     }
 
     public StepProcessor<?> getProcessor() {

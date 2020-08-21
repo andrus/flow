@@ -9,7 +9,7 @@ import java.util.function.Function;
 public class DefaultStepContext implements StepContext {
 
     private Object output;
-    private String egress;
+    private String egressName;
     private Map<String, Object> attributes;
 
     public DefaultStepContext(Map<String, Object> attributes) {
@@ -39,7 +39,8 @@ public class DefaultStepContext implements StepContext {
     }
 
     @Override
-    public DefaultStepContext setOutput(Object output) {
+    public StepContext proceed(Object output, String egressName) {
+        this.egressName = egressName;
         this.output = output;
         return this;
     }
@@ -48,13 +49,7 @@ public class DefaultStepContext implements StepContext {
         return output;
     }
 
-    @Override
-    public DefaultStepContext setEgress(String egress) {
-        this.egress = egress;
-        return this;
-    }
-
-    public String getEgress() {
-        return egress;
+    public String getEgressName() {
+        return egressName;
     }
 }
