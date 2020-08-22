@@ -19,10 +19,10 @@ public class FlowPathTest {
         FlowPath p3 = FlowPath.of("p0", "p2", "p3");
         FlowPath p4 = FlowPath.of("p1", "p2", "p3");
 
-        assertFalse(p1.equals(p2));
-        assertFalse(p2.equals(p1));
-        assertFalse(p1.equals(p3));
-        assertTrue(p1.equals(p4));
+        assertNotEquals(p2, p1);
+        assertNotEquals(p1, p2);
+        assertNotEquals(p3, p1);
+        assertEquals(p4, p1);
     }
 
     @Test
