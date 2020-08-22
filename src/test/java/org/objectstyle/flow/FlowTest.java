@@ -31,7 +31,29 @@ public class FlowTest {
         Flow f1 = Flow.of(doNothing).egress("f21", f21).egress("f22", f22);
 
         StringBuilder buffer = new StringBuilder();
-        f1.accept((f, p) -> buffer.append(p.isRoot() ? "" : ":").append(p.getName()));
+        f1.accept((f, p) -> {
+            buffer.append(p.isRoot() ? "" : ":").append(p.getName());
+            return true;
+        });
         assertEquals("[root]:f21:f31:f22", buffer.toString(), "Expected depth-first flow traversal");
+    }
+
+    @Test
+    public void testAccept_TerminateSubtree() {
+        StepProcessor<Object> doNothing = (i, c) -> {/* */};
+        Flow f31 = Flow.of(doNothing);
+        Flow f21 = Flow.of(doNothing).egress("f31", f31);
+        Flow f22 = Flow.of(doNothing);
+
+        Flow f1 = Flow.of(doNothing).egress("f21", f21).egress("f22", f22);
+
+        StringBuilder buffer = new StringBuilder();
+        f1.accept((f, p) -> {
+            buffer.append(p.isRoot() ? "" : ":").append(p.getName());
+
+            // terminate a single branch
+            return !p.getName().equals("f21");
+        });
+        assertEquals("[root]:f21:f22", buffer.toString(), "Expected 'f21' branch to be terminated");
     }
 }

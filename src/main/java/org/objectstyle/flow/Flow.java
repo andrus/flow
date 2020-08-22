@@ -87,14 +87,15 @@ public class Flow {
     }
 
     protected void accept(FlowVisitor visitor, FlowPath path) {
-        visitor.onFlowNode(this, path);
+        if (visitor.onFlowNode(this, path)) {
 
-        if (defaultEgress != null) {
-            defaultEgress.accept(visitor, path.subpath(FlowPath.DEFAULT_EGRESS));
-        }
+            if (defaultEgress != null) {
+                defaultEgress.accept(visitor, path.subpath(FlowPath.DEFAULT_EGRESS));
+            }
 
-        for (Map.Entry<String, Flow> e : namedEgresses.entrySet()) {
-            e.getValue().accept(visitor, path.subpath(e.getKey()));
+            for (Map.Entry<String, Flow> e : namedEgresses.entrySet()) {
+                e.getValue().accept(visitor, path.subpath(e.getKey()));
+            }
         }
     }
 }

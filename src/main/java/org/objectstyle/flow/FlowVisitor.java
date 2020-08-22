@@ -5,5 +5,11 @@ package org.objectstyle.flow;
  */
 public interface FlowVisitor {
 
-    void onFlowNode(Flow node, FlowPath path);
+    /**
+     * A visitor callback method invoked on every flow node.
+     *
+     * @return true if the visitor wants to to continue traversal of this node's children, false - if traversal
+     * should stop at this branch and move on to peer nodes.
+     */
+    boolean onFlowNode(Flow node, FlowPath path);
 }
