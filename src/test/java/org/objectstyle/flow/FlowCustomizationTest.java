@@ -76,4 +76,14 @@ public class FlowCustomizationTest {
         assertNotSame(template, inserted);
         assertEquals(":f21:f31:_default:f22", FlowTester.flatten(inserted));
     }
+
+    @Test
+    public void testInsert_Leaf() {
+
+        Flow template = flowTemplate();
+
+        Flow inserted = template.insert("f22.newNode", doNothing());
+        assertNotSame(template, inserted);
+        assertEquals(":f21:f31:f22:newNode", FlowTester.flatten(inserted));
+    }
 }

@@ -95,6 +95,10 @@ public class Flow {
         return egresses.get(egressName);
     }
 
+    public boolean isLeaf() {
+        return egresses.isEmpty();
+    }
+
     /**
      * Accepts a visitor passing it to this and each child flow node in a depth-first manner.
      *

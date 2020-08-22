@@ -28,7 +28,7 @@ public class InsertVisitor implements FlowVisitor {
 
     public Flow insert() {
 
-        // if inserting at root, skip the walk, as we can just connect the new node to the flow root
+        // if inserting at root, skip the walk, as the insert is trivial
         if (insertAt.isRoot()) {
             return Flow.of(toInsert).egress(flow);
         }
@@ -59,16 +59,23 @@ public class InsertVisitor implements FlowVisitor {
             return false;
         }
 
-        // 2. on the way to find the insertion point, continue with this branch
-        if (insertAt.length() != path.length()) {
+        // 2. haven't reached the insertion point yet, continue with this branch
+        int stepsLeft = insertAt.length() - path.length();
+        if (stepsLeft > 0) {
             stack.add(new FlowNode(path, node));
+
+            // 2.1 if the node is a leaf node, and we are one component short of insertion point, append it here
+            if (node.isLeaf() && stepsLeft == 1) {
+                peekStack().addEgress(insertAt, Flow.of(toInsert));
+                return false;
+            }
+
             return true;
         }
+
         // 3. found the insertion point - do insert and get out of this branch
-        else {
-            peekStack().addEgress(path, Flow.of(toInsert).egress(node));
-            return false;
-        }
+        peekStack().addEgress(path, Flow.of(toInsert).egress(node));
+        return false;
     }
 
     private FlowNode peekStack() {
@@ -76,8 +83,8 @@ public class InsertVisitor implements FlowVisitor {
     }
 
     static class FlowNode {
-        private Flow flow;
-        private FlowPath path;
+        private final Flow flow;
+        private final FlowPath path;
         private Map<String, Flow> egresses;
 
         FlowNode(FlowPath path, Flow flow) {
