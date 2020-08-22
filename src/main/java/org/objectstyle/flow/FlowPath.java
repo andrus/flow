@@ -32,10 +32,18 @@ public class FlowPath {
     }
 
     /**
-     * Creates a path pointing to the current node.
+     * Creates a path from an array of segments.
      */
     public static FlowPath of(String... segments) {
         // TODO: clone the array for guaranteed immutability?
+        return new FlowPath(segments);
+    }
+
+    /**
+     * Creates a path from a dot-separated String.
+     */
+    public static FlowPath parse(String path) {
+        String[] segments = path.split("\\.");
         return new FlowPath(segments);
     }
 

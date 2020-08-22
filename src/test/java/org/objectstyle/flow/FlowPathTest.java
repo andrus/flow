@@ -2,10 +2,15 @@ package org.objectstyle.flow;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FlowPathTest {
+
+    @Test
+    public void testParse() {
+        assertEquals(FlowPath.of("a"), FlowPath.parse("a"));
+        assertEquals(FlowPath.of("a", "b", "c"), FlowPath.parse("a.b.c"));
+    }
 
     @Test
     public void testEquals() {
