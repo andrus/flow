@@ -15,7 +15,7 @@ public interface StepContext {
     StepContext setAttributeIfAbsent(String name, Function<String, ?> mappingFunction);
 
     default StepContext proceed(Object output) {
-        return proceed(output, null);
+        return proceed(output, FlowPath.DEFAULT_EGRESS);
     }
 
     StepContext proceed(Object output, String egressName);

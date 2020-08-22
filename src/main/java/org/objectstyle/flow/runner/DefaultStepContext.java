@@ -1,9 +1,11 @@
 package org.objectstyle.flow.runner;
 
+import org.objectstyle.flow.FlowPath;
 import org.objectstyle.flow.StepContext;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class DefaultStepContext implements StepContext {
@@ -15,6 +17,7 @@ public class DefaultStepContext implements StepContext {
     public DefaultStepContext(Map<String, Object> attributes) {
         // clone the map, as the context is mutable
         this.attributes = new HashMap<>(attributes);
+        this.egressName = FlowPath.DEFAULT_EGRESS;
     }
 
     public DefaultStepContext newWithClonedAttributes() {
@@ -40,7 +43,7 @@ public class DefaultStepContext implements StepContext {
 
     @Override
     public StepContext proceed(Object output, String egressName) {
-        this.egressName = egressName;
+        this.egressName = Objects.requireNonNull(egressName);
         this.output = output;
         return this;
     }

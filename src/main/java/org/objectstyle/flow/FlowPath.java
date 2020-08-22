@@ -7,7 +7,7 @@ import java.util.Arrays;
  */
 public class FlowPath {
 
-    private static final String DEFAULT_EGRESS = "_default";
+    public static final String DEFAULT_EGRESS = "_default";
 
     private final String[] segments;
 

@@ -10,20 +10,18 @@ import java.util.*;
 public class Flow {
 
     private final StepProcessor<?> processor;
-    private final Map<String, Flow> namedEgresses;
-    private final Flow defaultEgress;
+    private final Map<String, Flow> egresses;
 
-    protected Flow(StepProcessor<?> processor, Flow defaultEgress, Map<String, Flow> namedEgresses) {
+    protected Flow(StepProcessor<?> processor, Map<String, Flow> egresses) {
         this.processor = Objects.requireNonNull(processor);
-        this.defaultEgress = defaultEgress;
-        this.namedEgresses = Objects.requireNonNull(namedEgresses);
+        this.egresses = Objects.requireNonNull(egresses);
     }
 
     /**
      * Creates a new single-step flow object.
      */
     public static Flow of(StepProcessor<?> processor) {
-        return new Flow(processor, null, Collections.emptyMap());
+        return new Flow(processor, Collections.emptyMap());
     }
 
     /**
@@ -33,7 +31,7 @@ public class Flow {
      * @return a copy of this Flow object connected to provided egress flow.
      */
     public Flow egress(Flow subFlow) {
-        return new Flow(processor, subFlow, namedEgresses);
+        return doEgress(FlowPath.DEFAULT_EGRESS, subFlow);
     }
 
     /**
@@ -44,14 +42,17 @@ public class Flow {
      * @return a copy of this Flow object connected to provided egress flow.
      */
     public Flow egress(String egressName, Flow subFlow) {
-
         FlowPath.validateSegmentName(egressName);
+        return doEgress(egressName, subFlow);
+    }
 
-        Map<String, Flow> egresses = new LinkedHashMap<>((int) ((this.namedEgresses.size() + 2) / 0.75));
-        egresses.putAll(this.namedEgresses);
+    public Flow doEgress(String egressName, Flow subFlow) {
+
+        Map<String, Flow> egresses = new LinkedHashMap<>((int) ((this.egresses.size() + 2) / 0.75));
+        egresses.putAll(this.egresses);
         egresses.put(egressName, subFlow);
 
-        return new Flow(processor, defaultEgress, egresses);
+        return new Flow(processor, egresses);
     }
 
     public Flow egress(StepProcessor<?> subProcessor) {
@@ -66,17 +67,8 @@ public class Flow {
         return processor;
     }
 
-    public Flow getDefaultEgress() {
-        return defaultEgress;
-    }
-
     public Flow getEgress(String egressName) {
-        Flow egress = namedEgresses.get(egressName);
-        if (egress == null) {
-            throw new IllegalArgumentException("No such egress: " + egressName);
-        }
-
-        return egress;
+        return egresses.get(egressName);
     }
 
     /**
@@ -91,11 +83,7 @@ public class Flow {
     protected void accept(FlowVisitor visitor, FlowPath path) {
         if (visitor.onFlowNode(this, path)) {
 
-            if (defaultEgress != null) {
-                defaultEgress.accept(visitor, path.subpathForDefaultEgress());
-            }
-
-            for (Map.Entry<String, Flow> e : namedEgresses.entrySet()) {
+            for (Map.Entry<String, Flow> e : egresses.entrySet()) {
                 e.getValue().accept(visitor, path.subpath(e.getKey()));
             }
         }

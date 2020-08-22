@@ -18,7 +18,7 @@ public class FlowTest {
     public void testEgress() {
         Flow f1 = Flow.of((i, c) -> c.proceed(i));
         Flow f2 = Flow.of((i, c) -> c.proceed(i)).egress(f1);
-        assertSame(f1, f2.getDefaultEgress());
+        assertSame(f1, f2.getEgress(FlowPath.DEFAULT_EGRESS));
     }
 
     @Test

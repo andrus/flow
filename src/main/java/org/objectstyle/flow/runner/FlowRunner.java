@@ -9,8 +9,8 @@ import java.util.Objects;
 
 public class FlowRunner {
 
-    private Flow flow;
-    private Map<String, Object> startAttributes;
+    private final Flow flow;
+    private final Map<String, Object> startAttributes;
 
     protected FlowRunner(Flow flow) {
         this.flow = Objects.requireNonNull(flow);
@@ -37,11 +37,9 @@ public class FlowRunner {
         processor.run(input, context);
         String egress = context.getEgressName();
 
-        // note that named egress will be present, or an exception is thrown. While default egress may be null
         // TODO: StepProcessor should define a set of supported egress names (including the default), so that we can
         //  tell the difference between a wrong name and no routing
-        Flow nextStep = egress != null ? flow.getEgress(egress) : flow.getDefaultEgress();
-
+        Flow nextStep = flow.getEgress(egress);
         return (nextStep != null)
                 ? runOne(nextStep, context.getOutput(), context.newWithClonedAttributes())
                 : context.getOutput();
