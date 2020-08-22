@@ -33,7 +33,7 @@ public class Flow {
      * @return a copy of this Flow object connected to provided egress flow.
      */
     public Flow egress(Flow subFlow) {
-        return doEgress(FlowPath.DEFAULT_EGRESS, subFlow);
+        return egress(FlowPath.DEFAULT_EGRESS, subFlow);
     }
 
     /**
@@ -45,16 +45,26 @@ public class Flow {
      */
     public Flow egress(String egressName, Flow subFlow) {
         FlowPath.validateSegmentName(egressName);
-        return doEgress(egressName, subFlow);
-    }
-
-    protected Flow doEgress(String egressName, Flow subFlow) {
 
         Map<String, Flow> egresses = new LinkedHashMap<>((int) ((this.egresses.size() + 2) / 0.75));
         egresses.putAll(this.egresses);
         egresses.put(egressName, subFlow);
 
         return new Flow(processor, egresses);
+    }
+
+    public Flow egresses(Map<String, Flow> egresses) {
+
+        if (egresses.isEmpty()) {
+            return this;
+        }
+
+        egresses.forEach((k, v) -> FlowPath.validateSegmentName(k));
+        Map<String, Flow> copy = new LinkedHashMap<>((int) ((this.egresses.size() + 2) / 0.75));
+        copy.putAll(this.egresses);
+        copy.putAll(egresses);
+
+        return new Flow(processor, copy);
     }
 
     public Flow egress(StepProcessor<?> subProcessor) {
