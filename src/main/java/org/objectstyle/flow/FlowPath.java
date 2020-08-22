@@ -7,7 +7,6 @@ import java.util.Arrays;
  */
 public class FlowPath {
 
-    private static final String ROOT_SEGMENT_NAME = "_root";
     private static final String DEFAULT_EGRESS = "_default";
 
     private final String[] segments;
@@ -28,7 +27,7 @@ public class FlowPath {
      * Creates a path pointing to the current node.
      */
     public static FlowPath root() {
-        return new FlowPath(new String[]{ROOT_SEGMENT_NAME});
+        return new FlowPath(new String[]{});
     }
 
     /**
@@ -52,7 +51,7 @@ public class FlowPath {
     }
 
     public boolean isRoot() {
-        return segments.length == 1;
+        return segments.length == 0;
     }
 
     public FlowPath subpathForDefaultEgress() {
@@ -67,7 +66,7 @@ public class FlowPath {
     }
 
     public String getLastSegmentName() {
-        return segments[segments.length - 1];
+        return segments.length == 0 ? null : segments[segments.length - 1];
     }
 
     @Override
