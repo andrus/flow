@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class FlowCustomizationTest {
 
     @Test
-    public void testRun_ReplaceDefaultEgress() {
+    public void testEgress_ReplaceDefault() {
         Flow templateStep3 = Flow.of((i, c) -> c.proceed(i + "_3"));
         Flow templateStep2 = Flow.of((i, c) -> c.proceed(i + "_2")).egress(templateStep3);
         Flow templateStep1 = Flow.of((i, c) -> c.proceed(i + "_1")).egress(templateStep2);
@@ -21,7 +21,7 @@ public class FlowCustomizationTest {
     }
 
     @Test
-    public void testRun_ReplaceNamedEgress() {
+    public void testEgress_ReplaceNamed() {
         Flow templateStep3 = Flow.of((i, c) -> c.proceed(i + "_3"));
         Flow templateStep2 = Flow.of((i, c) -> c.proceed(i + "_2", "next")).egress("next", templateStep3);
         Flow templateStep1 = Flow.of((i, c) -> c.proceed(i + "_1", "next")).egress("next", templateStep2);
