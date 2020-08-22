@@ -1,6 +1,7 @@
 package org.objectstyle.flow;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Encapsulates a single linear path through the flow tree identified by the names of egresses.
@@ -37,8 +38,11 @@ public class FlowPath {
      * Creates a path from a dot-separated String.
      */
     public static FlowPath parse(String path) {
-        String[] segments = path.split("\\.");
-        return new FlowPath(segments);
+        Objects.requireNonNull(path, "Null 'path'");
+
+        return path.length() > 0
+                ? new FlowPath(path.split("\\."))
+                : FlowPath.root();
     }
 
     protected FlowPath(String[] segments) {

@@ -48,6 +48,16 @@ public class FlowCustomizationTest {
     }
 
     @Test
+    public void testInsert_Level0() {
+
+        Flow template = flowTemplate();
+
+        Flow inserted = template.insert("", doNothing());
+        assertNotSame(template, inserted);
+        assertEquals(":_default:f21:f31:f22", FlowTester.flatten(inserted));
+    }
+
+    @Test
     public void testInsert_Level1() {
 
         Flow template = flowTemplate();

@@ -12,19 +12,29 @@ import java.util.Map;
 
 public class InsertVisitor implements FlowVisitor {
 
+    private final Flow flow;
     private final FlowPath insertAt;
     private final StepProcessor<?> toInsert;
 
     // contains nodes along "insertAt" path
     private final List<FlowNode> stack;
 
-    public InsertVisitor(FlowPath insertAt, StepProcessor<?> toInsert) {
+    public InsertVisitor(Flow flow, FlowPath insertAt, StepProcessor<?> toInsert) {
+        this.flow = flow;
         this.insertAt = insertAt;
         this.toInsert = toInsert;
         this.stack = new ArrayList<>(insertAt.length());
     }
 
-    public Flow getFlow() {
+    public Flow insert() {
+
+        // if inserting at root, skip the walk, as we can just connect the new node to the flow root
+        if (insertAt.isRoot()) {
+            return Flow.of(toInsert).egress(flow);
+        }
+
+        // process the tree, detect insertion point
+        flow.accept(this);
 
         // walk back the stack, creating any needed extra connections
         FlowNode last = null;
@@ -44,28 +54,21 @@ public class InsertVisitor implements FlowVisitor {
     @Override
     public boolean onFlowNode(FlowPath path, Flow node) {
 
-        // 1. root node - it is on the change path, so record and continue
-        if (path.isRoot()) {
+        if (!insertAt.startsWith(path)) {
+            // 1. unrelated branch - can stop traversal in that direction
+            return false;
+        }
+
+        // 2. on the way to find the insertion point, continue with this branch
+        if (insertAt.length() != path.length()) {
             stack.add(new FlowNode(path, node));
             return true;
         }
-
-        if (insertAt.startsWith(path)) {
-
-            // 2. still on the way to find it, continue with this branch
-            if (insertAt.length() != path.length()) {
-                stack.add(new FlowNode(path, node));
-                return true;
-            }
-            // 3. found it - do insert and get out of this branch
-            else {
-                peekStack().addEgress(path, Flow.of(toInsert).egress(node));
-                return false;
-            }
+        // 3. found the insertion point - do insert and get out of this branch
+        else {
+            peekStack().addEgress(path, Flow.of(toInsert).egress(node));
+            return false;
         }
-
-        // 4. unrelated branch - can stop traversal in that direction
-        return false;
     }
 
     private FlowNode peekStack() {

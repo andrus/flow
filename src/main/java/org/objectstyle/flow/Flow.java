@@ -84,9 +84,7 @@ public class Flow {
      * @return a copy of this flow with an inserted extra step.
      */
     public Flow insert(String at, StepProcessor<?> processor) {
-        InsertVisitor visitor = new InsertVisitor(FlowPath.parse(at), processor);
-        accept(visitor);
-        return visitor.getFlow();
+        return new InsertVisitor(this, FlowPath.parse(at), processor).insert();
     }
 
     public StepProcessor<?> getProcessor() {
