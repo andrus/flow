@@ -25,9 +25,9 @@ public class Flow {
     }
 
     /**
-     * Creates a new flow, connecting the default unnamed egress of this flow with another flow.
+     * Creates a new flow, connecting the default egress of this flow with another flow.
      *
-     * @param subFlow an egress flow called when an unnamed egress is requested
+     * @param subFlow an egress flow called when an egress is requested
      * @return a copy of this Flow object connected to provided egress flow.
      */
     public Flow egress(Flow subFlow) {
