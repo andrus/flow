@@ -65,6 +65,10 @@ public class FlowPath {
         return new FlowPath(segmentsPlusOne);
     }
 
+    public String getSegmentName(int pos) {
+        return segments[pos];
+    }
+
     public String getLastSegmentName() {
         return segments.length == 0 ? null : segments[segments.length - 1];
     }
