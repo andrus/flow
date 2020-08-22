@@ -2,11 +2,23 @@ package org.objectstyle.flow;
 
 public class FlowPath {
 
-    static final String ROOT = "[root]";
-    static final String DEFAULT_EGRESS = "[default]";
+    static final String ROOT = "_root";
+    static final String DEFAULT_EGRESS = "_default";
 
     private String name;
     private FlowPath previous;
+
+    static void validatePathSegment(String pathSegment) {
+        if (pathSegment.startsWith("_")) {
+            throw new IllegalArgumentException("Path segment name must not start with '_', " +
+                    "which is reserved for internal uses. Offending name: " + pathSegment);
+        }
+
+        if (pathSegment.contains(".")) {
+            throw new IllegalArgumentException("Path segment name must not contain '.', " +
+                    "which is reserved as segment separator. Offending name: " + pathSegment);
+        }
+    }
 
     public static FlowPath root() {
         return new FlowPath(ROOT, null);
@@ -21,7 +33,7 @@ public class FlowPath {
         return previous == null;
     }
 
-    public FlowPath defaultSubPath() {
+    public FlowPath subpath() {
         return subpath(DEFAULT_EGRESS);
     }
 

@@ -35,7 +35,7 @@ public class FlowTest {
             buffer.append(p.isRoot() ? "" : ":").append(p.getName());
             return true;
         });
-        assertEquals("[root]:f21:f31:f22", buffer.toString(), "Expected depth-first flow traversal");
+        assertEquals("_root:f21:f31:f22", buffer.toString(), "Expected depth-first flow traversal");
     }
 
     @Test
@@ -54,6 +54,6 @@ public class FlowTest {
             // terminate a single branch
             return !p.getName().equals("f21");
         });
-        assertEquals("[root]:f21:f22", buffer.toString(), "Expected 'f21' branch to be terminated");
+        assertEquals("_root:f21:f22", buffer.toString(), "Expected 'f21' branch to be terminated");
     }
 }
