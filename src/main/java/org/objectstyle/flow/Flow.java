@@ -46,7 +46,7 @@ public class Flow {
         return doEgress(egressName, subFlow);
     }
 
-    public Flow doEgress(String egressName, Flow subFlow) {
+    protected Flow doEgress(String egressName, Flow subFlow) {
 
         Map<String, Flow> egresses = new LinkedHashMap<>((int) ((this.egresses.size() + 2) / 0.75));
         egresses.putAll(this.egresses);
