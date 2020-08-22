@@ -8,10 +8,9 @@ public class FlowPath {
     private static final String ROOT_SEGMENT_NAME = "_root";
     private static final String DEFAULT_EGRESS = "_default";
 
-    private final String name;
-    private final FlowPath previous;
+    private final String[] segments;
 
-    static void validatePathSegment(String pathSegment) {
+    static void validateSegmentName(String pathSegment) {
         if (pathSegment.startsWith("_")) {
             throw new IllegalArgumentException("Path segment name must not start with '_', " +
                     "which is reserved for internal uses. Offending name: " + pathSegment);
@@ -27,16 +26,15 @@ public class FlowPath {
      * Creates a path pointing to the current node.
      */
     public static FlowPath root() {
-        return new FlowPath(ROOT_SEGMENT_NAME, null);
+        return new FlowPath(new String[]{ROOT_SEGMENT_NAME});
     }
 
-    protected FlowPath(String name, FlowPath previous) {
-        this.name = name;
-        this.previous = previous;
+    protected FlowPath(String[] segments) {
+        this.segments = segments;
     }
 
     public boolean isRoot() {
-        return previous == null;
+        return segments.length == 1;
     }
 
     public FlowPath subpathForDefaultEgress() {
@@ -44,30 +42,27 @@ public class FlowPath {
     }
 
     public FlowPath subpath(String name) {
-        return new FlowPath(name, this);
+        String[] segmentsPlusOne = new String[segments.length + 1];
+        System.arraycopy(segments, 0, segmentsPlusOne, 0, segments.length);
+        segmentsPlusOne[segments.length] = name;
+        return new FlowPath(segmentsPlusOne);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public FlowPath getPrevious() {
-        return previous;
+    public String getLastSegmentName() {
+        return segments[segments.length - 1];
     }
 
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();
-
-        FlowPath p = this;
-        while (p != null) {
-            out.insert(0, p.getName());
-            p = p.getPrevious();
-            if (p != null) {
-                out.insert(0, ".");
+        int len = segments.length;
+        for (int i = 0; i < len; i++) {
+            if (i > 0) {
+                out.append(".");
             }
-        }
+            out.append(segments[i]);
 
+        }
         return out.toString();
     }
 }

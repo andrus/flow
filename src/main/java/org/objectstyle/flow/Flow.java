@@ -45,7 +45,7 @@ public class Flow {
      */
     public Flow egress(String egressName, Flow subFlow) {
 
-        FlowPath.validatePathSegment(egressName);
+        FlowPath.validateSegmentName(egressName);
 
         Map<String, Flow> egresses = new LinkedHashMap<>((int) ((this.namedEgresses.size() + 2) / 0.75));
         egresses.putAll(this.namedEgresses);
