@@ -20,6 +20,9 @@ public class FlowPath {
         }
     }
 
+    /**
+     * Creates a path pointing to the current node.
+     */
     public static FlowPath root() {
         return new FlowPath(ROOT, null);
     }
