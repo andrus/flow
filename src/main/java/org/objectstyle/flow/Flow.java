@@ -92,7 +92,7 @@ public class Flow {
         if (visitor.onFlowNode(this, path)) {
 
             if (defaultEgress != null) {
-                defaultEgress.accept(visitor, path.subpath(FlowPath.DEFAULT_EGRESS));
+                defaultEgress.accept(visitor, path.subpathForDefaultEgress());
             }
 
             for (Map.Entry<String, Flow> e : namedEgresses.entrySet()) {

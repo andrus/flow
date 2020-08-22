@@ -1,12 +1,15 @@
 package org.objectstyle.flow;
 
+/**
+ * Encapsulates a single linear path through the flow tree identified by the names of egresses.
+ */
 public class FlowPath {
 
-    static final String ROOT = "_root";
-    static final String DEFAULT_EGRESS = "_default";
+    private static final String ROOT_SEGMENT_NAME = "_root";
+    private static final String DEFAULT_EGRESS = "_default";
 
-    private String name;
-    private FlowPath previous;
+    private final String name;
+    private final FlowPath previous;
 
     static void validatePathSegment(String pathSegment) {
         if (pathSegment.startsWith("_")) {
@@ -24,7 +27,7 @@ public class FlowPath {
      * Creates a path pointing to the current node.
      */
     public static FlowPath root() {
-        return new FlowPath(ROOT, null);
+        return new FlowPath(ROOT_SEGMENT_NAME, null);
     }
 
     protected FlowPath(String name, FlowPath previous) {
@@ -36,7 +39,7 @@ public class FlowPath {
         return previous == null;
     }
 
-    public FlowPath subpath() {
+    public FlowPath subpathForDefaultEgress() {
         return subpath(DEFAULT_EGRESS);
     }
 
