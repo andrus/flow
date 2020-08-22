@@ -31,7 +31,7 @@ public class FlowTest {
         Flow f1 = Flow.of(doNothing).egress("f21", f21).egress("f22", f22);
 
         StringBuilder buffer = new StringBuilder();
-        f1.accept((f, p) -> {
+        f1.accept((p, f) -> {
             buffer.append(p.isRoot() ? "" : ":" + p.getLastSegmentName());
             return true;
         });
@@ -48,7 +48,7 @@ public class FlowTest {
         Flow f1 = Flow.of(doNothing).egress("f21", f21).egress("f22", f22);
 
         StringBuilder buffer = new StringBuilder();
-        f1.accept((f, p) -> {
+        f1.accept((p, f) -> {
             buffer.append(p.isRoot() ? "" : ":" + p.getLastSegmentName());
 
             // terminate a single branch

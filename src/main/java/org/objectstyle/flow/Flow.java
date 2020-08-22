@@ -1,5 +1,7 @@
 package org.objectstyle.flow;
 
+import org.objectstyle.flow.visitor.InsertVisitor;
+
 import java.util.*;
 
 /**
@@ -63,6 +65,12 @@ public class Flow {
         return egress(egressName, Flow.of(subProcessor));
     }
 
+    public Flow insert(String at, StepProcessor<?> processor) {
+        InsertVisitor visitor = new InsertVisitor(FlowPath.parse(at), processor);
+        accept(visitor);
+        return visitor.getFlow();
+    }
+
     public StepProcessor<?> getProcessor() {
         return processor;
     }
@@ -81,7 +89,7 @@ public class Flow {
     }
 
     protected void accept(FlowVisitor visitor, FlowPath path) {
-        if (visitor.onFlowNode(this, path)) {
+        if (visitor.onFlowNode(path, this)) {
 
             for (Map.Entry<String, Flow> e : egresses.entrySet()) {
                 e.getValue().accept(visitor, path.subpath(e.getKey()));

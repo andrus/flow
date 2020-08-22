@@ -13,5 +13,5 @@ public interface FlowVisitor {
      * @return true if the visitor wants to continue traversal of this node's children, false - if traversal
      * should stop at this branch and move on to peer nodes.
      */
-    boolean onFlowNode(Flow node, FlowPath path);
+    boolean onFlowNode(FlowPath path, Flow node);
 }
