@@ -62,6 +62,19 @@ public class FlowPath {
         return segments[segments.length - 1];
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FlowPath flowPath = (FlowPath) o;
+        return Arrays.equals(segments, flowPath.segments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(segments);
+    }
+
     public boolean startsWith(FlowPath path) {
         int otherLen = path.segments.length;
         if (segments.length < otherLen) {
@@ -69,6 +82,10 @@ public class FlowPath {
         }
 
         return Arrays.equals(segments, 0, otherLen, path.segments, 0, otherLen);
+    }
+
+    public int length() {
+        return segments.length;
     }
 
     @Override
