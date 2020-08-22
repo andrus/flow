@@ -1,4 +1,4 @@
-package org.objectstyle.flow.visitor;
+package org.objectstyle.flow.op;
 
 import org.objectstyle.flow.Flow;
 import org.objectstyle.flow.FlowPath;

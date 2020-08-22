@@ -1,6 +1,6 @@
 package org.objectstyle.flow;
 
-import org.objectstyle.flow.visitor.InsertVisitor;
+import org.objectstyle.flow.op.InsertVisitor;
 
 import java.util.*;
 
