@@ -4,8 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.objectstyle.flow.runner.FlowRunner;
 import org.objectstyle.flow.test.FlowTester;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FlowCustomizationTest {
 
@@ -85,5 +84,11 @@ public class FlowCustomizationTest {
         Flow inserted = template.insert("f22.newNode", doNothing());
         assertNotSame(template, inserted);
         assertEquals(":f21:f31:f22:newNode", FlowTester.flatten(inserted));
+    }
+
+    @Test
+    public void testInsert_InvalidPath() {
+        Flow template = flowTemplate();
+        assertThrows(RuntimeException.class, () -> template.insert("fx.fy", doNothing()));
     }
 }

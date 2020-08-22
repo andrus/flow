@@ -18,6 +18,7 @@ public class InsertVisitor implements FlowVisitor {
 
     // contains nodes along "insertAt" path
     private final List<FlowNode> stack;
+    private boolean pathMatched;
 
     public InsertVisitor(Flow flow, FlowPath insertAt, StepProcessor<?> toInsert) {
         this.flow = flow;
@@ -35,6 +36,10 @@ public class InsertVisitor implements FlowVisitor {
 
         // process the tree, detect insertion point
         flow.accept(this);
+
+        if(!pathMatched) {
+            throw new RuntimeException("Flow is incompatible with the insertion path: " + insertAt);
+        }
 
         // walk back the stack, creating any needed extra connections
         FlowNode last = null;
@@ -67,6 +72,7 @@ public class InsertVisitor implements FlowVisitor {
             // 2.1 if the node is a leaf node, and we are one component short of insertion point, append it here
             if (node.isLeaf() && stepsLeft == 1) {
                 peekStack().addEgress(insertAt, Flow.of(toInsert));
+                pathMatched = true;
                 return false;
             }
 
@@ -75,6 +81,7 @@ public class InsertVisitor implements FlowVisitor {
 
         // 3. found the insertion point - do insert and get out of this branch
         peekStack().addEgress(path, Flow.of(toInsert).egress(node));
+        pathMatched = true;
         return false;
     }
 
