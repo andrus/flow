@@ -75,6 +75,14 @@ public class Flow {
         return egress(egressName, Flow.of(subProcessor));
     }
 
+    /**
+     * Creates a new flow, inserting a new step at the specified path. The new step will be connected to the original
+     * egress using the default egress name.
+     *
+     * @param at        a dot-separated path to the insertion spot
+     * @param processor a processor to run at the insertion spot
+     * @return a copy of this flow with an inserted extra step.
+     */
     public Flow insert(String at, StepProcessor<?> processor) {
         InsertVisitor visitor = new InsertVisitor(FlowPath.parse(at), processor);
         accept(visitor);
