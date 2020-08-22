@@ -1,5 +1,7 @@
 package org.objectstyle.flow;
 
+import java.util.Arrays;
+
 /**
  * Encapsulates a single linear path through the flow tree identified by the names of egresses.
  */
@@ -29,6 +31,14 @@ public class FlowPath {
         return new FlowPath(new String[]{ROOT_SEGMENT_NAME});
     }
 
+    /**
+     * Creates a path pointing to the current node.
+     */
+    public static FlowPath of(String... segments) {
+        // TODO: clone the array for guaranteed immutability?
+        return new FlowPath(segments);
+    }
+
     protected FlowPath(String[] segments) {
         this.segments = segments;
     }
@@ -50,6 +60,15 @@ public class FlowPath {
 
     public String getLastSegmentName() {
         return segments[segments.length - 1];
+    }
+
+    public boolean startsWith(FlowPath path) {
+        int otherLen = path.segments.length;
+        if (segments.length < otherLen) {
+            return false;
+        }
+
+        return Arrays.equals(segments, 0, otherLen, path.segments, 0, otherLen);
     }
 
     @Override
