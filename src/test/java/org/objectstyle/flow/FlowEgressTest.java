@@ -5,7 +5,7 @@ import org.objectstyle.flow.runner.FlowRunner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FlowReplaceTest {
+public class FlowEgressTest {
 
     @Test
     public void testEgress_ReplaceDefault() {

@@ -16,7 +16,7 @@ public class FlowFindTest {
     private static final Flow f21 = Flow.of(doNothing()).egress("f31", f31);
     private static final Flow f22 = Flow.of(doNothing());
     private static final Flow f1 = Flow.of(doNothing()).egress("f21", f21).egress("f22", f22);
-    
+
     private void assertFound(Flow expected, Optional<Flow> found) {
         assertTrue(found.isPresent(), "Not found");
         assertSame(expected, found.get());
