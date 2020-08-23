@@ -18,6 +18,7 @@ public class InsertVisitor implements FlowVisitor {
 
     // contains nodes along "insertAt" path
     private final List<FlowNode> stack;
+    private Flow result;
     private boolean pathMatched;
 
     public InsertVisitor(Flow flow, FlowPath insertAt, StepProcessor<?> toInsert) {
@@ -37,27 +38,15 @@ public class InsertVisitor implements FlowVisitor {
         // process the tree, detect insertion point
         flow.accept(this);
 
-        if(!pathMatched) {
+        if (!pathMatched) {
             throw new RuntimeException("Flow is incompatible with the insertion path: " + insertAt);
         }
 
-        // walk back the stack, creating any needed extra connections
-        FlowNode last = null;
-        for (int i = stack.size() - 1; i >= 0; i--) {
-
-            FlowNode current = stack.get(i);
-            if (last != null) {
-                current.addEgress(last.path, last.resolve());
-            }
-
-            last = current;
-        }
-
-        return last.resolve();
+        return result;
     }
 
     @Override
-    public boolean onFlowNode(FlowPath path, Flow node) {
+    public boolean beforeNode(FlowPath path, Flow node) {
 
         if (!insertAt.startsWith(path)) {
             // 1. unrelated branch - can stop traversal in that direction
@@ -67,25 +56,45 @@ public class InsertVisitor implements FlowVisitor {
         // 2. haven't reached the insertion point yet, continue with this branch
         int stepsLeft = insertAt.length() - path.length();
         if (stepsLeft > 0) {
-            stack.add(new FlowNode(path, node));
 
             // 2.1 if the node is a leaf node, and we are one component short of insertion point, append it here
             if (node.isLeaf() && stepsLeft == 1) {
-                peekStack().addEgress(insertAt, Flow.of(toInsert));
+                peek().addEgress(insertAt, Flow.of(toInsert));
                 pathMatched = true;
                 return false;
             }
 
+            // "push" requires to return "true", so that "afterNode" is called, and stack push/pop is balanced
+            push(path, node);
             return true;
         }
 
         // 3. found the insertion point - do insert and get out of this branch
-        peekStack().addEgress(path, Flow.of(toInsert).egress(node));
+        peek().addEgress(path, Flow.of(toInsert).egress(node));
         pathMatched = true;
         return false;
     }
 
-    private FlowNode peekStack() {
+    @Override
+    public void afterNode(FlowPath path, Flow node) {
+        FlowNode current = pop();
+
+        if (stack.isEmpty()) {
+            this.result = current.resolve();
+        } else {
+            peek().addEgress(current.path, current.resolve());
+        }
+    }
+
+    private void push(FlowPath path, Flow node) {
+        stack.add(new FlowNode(path, node));
+    }
+
+    private FlowNode pop() {
+        return stack.remove(stack.size() - 1);
+    }
+
+    private FlowNode peek() {
         return stack.get(stack.size() - 1);
     }
 

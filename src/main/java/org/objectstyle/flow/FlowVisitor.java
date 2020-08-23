@@ -1,9 +1,9 @@
 package org.objectstyle.flow;
 
 /**
- * Allows to traverse the flow tree depth-first. 
- * 
- * @see Flow#accept(FlowVisitor) 
+ * Allows to traverse the flow tree depth-first.
+ *
+ * @see Flow#accept(FlowVisitor)
  */
 public interface FlowVisitor {
 
@@ -13,5 +13,8 @@ public interface FlowVisitor {
      * @return true if the visitor wants to continue traversal of this node's children, false - if traversal
      * should stop at this branch and move on to peer nodes.
      */
-    boolean onFlowNode(FlowPath path, Flow node);
+    boolean beforeNode(FlowPath path, Flow node);
+
+    default void afterNode(FlowPath path, Flow node) {
+    }
 }

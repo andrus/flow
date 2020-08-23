@@ -109,11 +109,13 @@ public class Flow {
     }
 
     protected void accept(FlowVisitor visitor, FlowPath path) {
-        if (visitor.onFlowNode(path, this)) {
+        if (visitor.beforeNode(path, this)) {
 
             for (Map.Entry<String, Flow> e : egresses.entrySet()) {
                 e.getValue().accept(visitor, path.subpath(e.getKey()));
             }
+
+            visitor.afterNode(path, this);
         }
     }
 }
