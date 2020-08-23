@@ -96,7 +96,7 @@ public class Flow {
      * @return a copy of this flow with an inserted extra step.
      */
     public Flow insert(String at, StepProcessor<?> processor) {
-        return new InsertOp(this, FlowPath.parse(at), processor).insert();
+        return new InsertOp(this, FlowPath.parse(at), processor).replace();
     }
 
     public Flow replace(String at, StepProcessor<?> processor) {

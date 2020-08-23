@@ -6,11 +6,11 @@ import org.objectstyle.flow.FlowPath;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class FlowRebuildOp {
+public class FlowBuilderStack {
 
     private final List<FlowBuilderNode> stack;
 
-    protected FlowRebuildOp(int stackDepth) {
+    protected FlowBuilderStack(int stackDepth) {
         this.stack = new ArrayList<>(stackDepth);
     }
 
@@ -26,7 +26,7 @@ public abstract class FlowRebuildOp {
         return stack.get(stack.size() - 1);
     }
 
-    protected boolean isEmptyStack() {
+    protected boolean isEmpty() {
         return stack.isEmpty();
     }
 }
