@@ -2,6 +2,7 @@ package org.objectstyle.flow;
 
 import org.objectstyle.flow.op.FindOp;
 import org.objectstyle.flow.op.InsertOp;
+import org.objectstyle.flow.op.ReplaceOp;
 
 import java.util.*;
 
@@ -77,6 +78,16 @@ public class Flow {
     }
 
     /**
+     * Locates a subflow for a given path.
+     *
+     * @param path a dot-separated path to find
+     * @return an optional flow matching the path
+     */
+    public Optional<Flow> find(String path) {
+        return new FindOp(this, FlowPath.parse(path)).find();
+    }
+
+    /**
      * Creates a new flow, inserting a new step at the specified path. The new step will be connected to the original
      * egress using the default egress name.
      *
@@ -88,14 +99,12 @@ public class Flow {
         return new InsertOp(this, FlowPath.parse(at), processor).insert();
     }
 
-    /**
-     * Finds a subflow for a given path.
-     *
-     * @param path a dot-separated path to find
-     * @return an optional flow matching the path
-     */
-    public Optional<Flow> find(String path) {
-        return new FindOp(this, FlowPath.parse(path)).find();
+    public Flow replace(String at, StepProcessor<?> processor) {
+        return replace(at, Flow.of(processor));
+    }
+
+    public Flow replace(String at, Flow replacement) {
+        return new ReplaceOp(this, FlowPath.parse(at), replacement).replace();
     }
 
     public StepProcessor<?> getProcessor() {

@@ -3,36 +3,32 @@ package org.objectstyle.flow.op;
 import org.objectstyle.flow.Flow;
 import org.objectstyle.flow.FlowPath;
 import org.objectstyle.flow.FlowVisitor;
-import org.objectstyle.flow.StepProcessor;
 
-public class InsertOp extends FlowRebuildOp implements FlowVisitor {
+public class ReplaceOp extends FlowRebuildOp implements FlowVisitor {
 
     private final Flow flow;
-    private final FlowPath insertAt;
-    private final StepProcessor<?> toInsert;
+    private final FlowPath replaceAt;
+    private final Flow replacement;
 
     private boolean pathMatched;
     private Flow result;
 
-    public InsertOp(Flow flow, FlowPath insertAt, StepProcessor<?> toInsert) {
-        super(insertAt.length());
+    public ReplaceOp(Flow flow, FlowPath replaceAt, Flow replacement) {
+        super(replaceAt.length());
         this.flow = flow;
-        this.insertAt = insertAt;
-        this.toInsert = toInsert;
+        this.replaceAt = replaceAt;
+        this.replacement = replacement;
     }
 
-    public Flow insert() {
-
-        // if inserting at root, skip the walk, as the insert is trivial
-        if (insertAt.isRoot()) {
-            return Flow.of(toInsert).egress(flow);
+    public Flow replace() {
+        if (replaceAt.isRoot()) {
+            return replacement;
         }
 
-        // process the tree, detect insertion point
         flow.accept(this);
 
         if (!pathMatched) {
-            throw new RuntimeException("Flow is incompatible with the insertion path: " + insertAt);
+            throw new RuntimeException("Flow is incompatible with the replacement path: " + replaceAt);
         }
 
         return result;
@@ -40,20 +36,19 @@ public class InsertOp extends FlowRebuildOp implements FlowVisitor {
 
     @Override
     public boolean beforeNode(FlowPath path, Flow node) {
-
-        if (!insertAt.startsWith(path)) {
+        if (!replaceAt.startsWith(path)) {
             // 1. unrelated branch - can stop traversal in that direction
             return false;
         }
 
-        int stepsLeft = insertAt.length() - path.length();
+        int stepsLeft = replaceAt.length() - path.length();
 
-        // 2. haven't reached the insertion point yet, continue with this branch
+        // 2. haven't reached the replacement point yet, continue with this branch
         if (stepsLeft > 0) {
 
-            // 2.1 if the node is a leaf node, and we are one component short of insertion point, append it here
+            // 2.1 if the node is a leaf node, and we are one component short of replacement point, append it here
             if (node.isLeaf() && stepsLeft == 1) {
-                peek().addEgress(insertAt, Flow.of(toInsert));
+                peek().addEgress(replaceAt, replacement);
                 pathMatched = true;
                 return false;
             }
@@ -63,8 +58,8 @@ public class InsertOp extends FlowRebuildOp implements FlowVisitor {
             return true;
         }
 
-        // 3. found the insertion point - do insert and get out of this branch
-        peek().addEgress(path, Flow.of(toInsert).egress(node));
+        // 3. found the replacement point - do replace and get out of this branch
+        peek().addEgress(replaceAt, replacement);
         pathMatched = true;
         return false;
     }

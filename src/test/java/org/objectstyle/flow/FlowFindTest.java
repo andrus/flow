@@ -27,32 +27,32 @@ public class FlowFindTest {
     }
 
     @Test
-    public void testFind_Level0() {
+    public void testLevel0() {
         assertFound(f1, f1.find(""));
     }
 
     @Test
-    public void testFind_Level1() {
+    public void testLevel1() {
         assertFound(f21, f1.find("f21"));
     }
 
     @Test
-    public void testFind_Level2() {
+    public void testLevel2() {
         assertFound(f31, f1.find("f21.f31"));
     }
 
     @Test
-    public void testFind_NotFound() {
+    public void testNotFound() {
         assertNotFound(f1.find("fx.fy"));
     }
 
     @Test
-    public void testFind_NotFound_PartialMatch() {
+    public void testNotFound_PartialMatch() {
         assertNotFound(f1.find("f21.fy"));
     }
 
     @Test
-    public void testFind_NotFound_PastLeaf() {
+    public void testNotFound_PastLeaf() {
         assertNotFound(f1.find("f21.f31.fx"));
     }
 }
