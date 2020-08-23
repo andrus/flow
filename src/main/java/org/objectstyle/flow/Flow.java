@@ -1,6 +1,7 @@
 package org.objectstyle.flow;
 
-import org.objectstyle.flow.op.InsertVisitor;
+import org.objectstyle.flow.op.FindOp;
+import org.objectstyle.flow.op.InsertOp;
 
 import java.util.*;
 
@@ -84,7 +85,17 @@ public class Flow {
      * @return a copy of this flow with an inserted extra step.
      */
     public Flow insert(String at, StepProcessor<?> processor) {
-        return new InsertVisitor(this, FlowPath.parse(at), processor).insert();
+        return new InsertOp(this, FlowPath.parse(at), processor).insert();
+    }
+
+    /**
+     * Finds a subflow for a given path.
+     *
+     * @param path a dot-separated path to find
+     * @return an optional flow matching the path
+     */
+    public Optional<Flow> find(String path) {
+        return new FindOp(this, FlowPath.parse(path)).find();
     }
 
     public StepProcessor<?> getProcessor() {

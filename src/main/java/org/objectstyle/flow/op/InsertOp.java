@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InsertVisitor implements FlowVisitor {
+public class InsertOp implements FlowVisitor {
 
     private final Flow flow;
     private final FlowPath insertAt;
@@ -18,10 +18,10 @@ public class InsertVisitor implements FlowVisitor {
 
     // contains nodes along "insertAt" path
     private final List<FlowNode> stack;
-    private Flow result;
     private boolean pathMatched;
+    private Flow result;
 
-    public InsertVisitor(Flow flow, FlowPath insertAt, StepProcessor<?> toInsert) {
+    public InsertOp(Flow flow, FlowPath insertAt, StepProcessor<?> toInsert) {
         this.flow = flow;
         this.insertAt = insertAt;
         this.toInsert = toInsert;
@@ -53,8 +53,9 @@ public class InsertVisitor implements FlowVisitor {
             return false;
         }
 
-        // 2. haven't reached the insertion point yet, continue with this branch
         int stepsLeft = insertAt.length() - path.length();
+
+        // 2. haven't reached the insertion point yet, continue with this branch
         if (stepsLeft > 0) {
 
             // 2.1 if the node is a leaf node, and we are one component short of insertion point, append it here
