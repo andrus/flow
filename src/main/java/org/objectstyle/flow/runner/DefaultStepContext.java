@@ -38,19 +38,19 @@ public class DefaultStepContext<INPUT> implements StepContext<INPUT> {
     }
 
     @Override
-    public DefaultStepContext setProperty(String name, Object value) {
+    public DefaultStepContext<INPUT> setProperty(String name, Object value) {
         properties.put(name, value);
         return this;
     }
 
     @Override
-    public DefaultStepContext setPropertyIfAbsent(String name, Function<String, ?> mappingFunction) {
+    public DefaultStepContext<INPUT> setPropertyIfAbsent(String name, Function<String, ?> mappingFunction) {
         properties.computeIfAbsent(name, mappingFunction);
         return this;
     }
 
     @Override
-    public StepContext proceed(Object output, String egressName) {
+    public DefaultStepContext<INPUT> proceed(Object output, String egressName) {
         this.egressName = Objects.requireNonNull(egressName);
         this.output = output;
         return this;
