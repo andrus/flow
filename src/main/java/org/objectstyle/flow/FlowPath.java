@@ -91,7 +91,7 @@ public class FlowPath {
             return false;
         }
 
-        return Arrays.equals(segments, 0, otherLen, path.segments, 0, otherLen);
+        return arraysEqual(segments, 0, otherLen, path.segments, 0, otherLen);
     }
 
     public int length() {
@@ -110,5 +110,22 @@ public class FlowPath {
 
         }
         return out.toString();
+    }
+
+    private static boolean arraysEqual(
+            Object[] a, int aFromIndex, int aToIndex,
+            Object[] b, int bFromIndex, int bToIndex) {
+
+        int aLength = aToIndex - aFromIndex;
+        int bLength = bToIndex - bFromIndex;
+        if (aLength != bLength)
+            return false;
+
+        for (int i = 0; i < aLength; i++) {
+            if (!Objects.equals(a[aFromIndex++], b[bFromIndex++]))
+                return false;
+        }
+
+        return true;
     }
 }

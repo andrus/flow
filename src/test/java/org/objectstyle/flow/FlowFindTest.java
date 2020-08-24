@@ -23,7 +23,7 @@ public class FlowFindTest {
     }
 
     private void assertNotFound(Optional<Flow> found) {
-        assertTrue(found.isEmpty(), () -> "Expected no matches, instead got: " + found.get());
+        assertFalse(found.isPresent(), () -> "Expected no matches, instead got: " + found.get());
     }
 
     @Test
