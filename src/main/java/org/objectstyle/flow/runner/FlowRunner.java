@@ -29,10 +29,10 @@ public class FlowRunner {
     // TODO: return result object with metrics and attributes
     public <T> T run(Object input) {
         DefaultStepContext<?> context = new DefaultStepContext<>(input, startAttributes);
-        return (T) runOne(flow, context);
+        return (T) run(flow, context);
     }
 
-    protected <T> Object runOne(Flow flow, DefaultStepContext<T> context) {
+    protected <T> Object run(Flow flow, DefaultStepContext<T> context) {
         StepProcessor processor = flow.getProcessor();
         processor.run(context);
         String egress = context.getEgressName();
@@ -41,7 +41,7 @@ public class FlowRunner {
         //  tell the difference between a wrong name and no routing
         Flow nextStep = flow.getEgress(egress);
         return (nextStep != null)
-                ? runOne(nextStep, context.forNextStep())
+                ? run(nextStep, context.forNextStep())
                 : context.getOutput();
     }
 }
