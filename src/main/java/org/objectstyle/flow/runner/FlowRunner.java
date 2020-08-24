@@ -10,26 +10,25 @@ import java.util.Objects;
 public class FlowRunner {
 
     private final Flow flow;
-    private final Map<String, Object> startAttributes;
+    private final Map<String, Object> startProperties;
 
     protected FlowRunner(Flow flow) {
         this.flow = Objects.requireNonNull(flow);
-        this.startAttributes = new HashMap<>();
+        this.startProperties = new HashMap<>();
     }
 
     public static FlowRunner of(Flow flow) {
         return new FlowRunner(flow);
     }
 
-    public FlowRunner attribute(String name, Object value) {
-        startAttributes.put(name, value);
+    public FlowRunner property(String name, Object value) {
+        startProperties.put(name, value);
         return this;
     }
 
     // TODO: return result object with metrics and attributes
     public <T> T run(Object input) {
-        DefaultStepContext<?> context = new DefaultStepContext<>(input, startAttributes);
-        return (T) run(flow, context);
+        return (T) run(flow, new DefaultStepContext<>(input, startProperties));
     }
 
     protected <T> Object run(Flow flow, DefaultStepContext<T> context) {

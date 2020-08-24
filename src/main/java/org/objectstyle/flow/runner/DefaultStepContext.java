@@ -13,13 +13,13 @@ public class DefaultStepContext<INPUT> implements StepContext<INPUT> {
     private INPUT input;
     private Object output;
     private String egressName;
-    private Map<String, Object> attributes;
+    private Map<String, Object> properties;
 
-    public DefaultStepContext(INPUT input, Map<String, Object> attributes) {
+    public DefaultStepContext(INPUT input, Map<String, Object> properties) {
         this.input = input;
 
         // clone the map, as the context is mutable
-        this.attributes = new HashMap<>(attributes);
+        this.properties = new HashMap<>(properties);
         this.egressName = FlowPath.DEFAULT_EGRESS;
     }
 
@@ -29,23 +29,23 @@ public class DefaultStepContext<INPUT> implements StepContext<INPUT> {
     }
 
     public <T> DefaultStepContext<T> forNextStep() {
-        return new DefaultStepContext<>((T) output, attributes);
+        return new DefaultStepContext<>((T) output, properties);
     }
 
     @Override
-    public <T> T getAttribute(String name, T defaultValue) {
-        return (T) attributes.getOrDefault(name, defaultValue);
+    public <T> T getProperty(String name, T defaultValue) {
+        return (T) properties.getOrDefault(name, defaultValue);
     }
 
     @Override
-    public DefaultStepContext setAttribute(String name, Object value) {
-        attributes.put(name, value);
+    public DefaultStepContext setProperty(String name, Object value) {
+        properties.put(name, value);
         return this;
     }
 
     @Override
-    public DefaultStepContext setAttributeIfAbsent(String name, Function<String, ?> mappingFunction) {
-        attributes.computeIfAbsent(name, mappingFunction);
+    public DefaultStepContext setPropertyIfAbsent(String name, Function<String, ?> mappingFunction) {
+        properties.computeIfAbsent(name, mappingFunction);
         return this;
     }
 

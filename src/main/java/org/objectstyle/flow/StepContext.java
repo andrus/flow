@@ -4,15 +4,15 @@ import java.util.function.Function;
 
 public interface StepContext<INPUT> {
 
-    default <T> T getAttribute(String name) {
-        return getAttribute(name, null);
+    default <T> T getProperty(String name) {
+        return getProperty(name, null);
     }
 
-    <T> T getAttribute(String name, T defaultValue);
+    <T> T getProperty(String name, T defaultValue);
 
-    StepContext setAttribute(String name, Object value);
+    StepContext setProperty(String name, Object value);
 
-    StepContext setAttributeIfAbsent(String name, Function<String, ?> mappingFunction);
+    StepContext setPropertyIfAbsent(String name, Function<String, ?> mappingFunction);
 
     INPUT getInput();
 
