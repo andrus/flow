@@ -29,6 +29,26 @@ public class Flow {
     }
 
     /**
+     * Creates a linear flow with steps connected via default egresses.
+     */
+    public static Flow ofSequence(StepProcessor<?>... processors) {
+        if (processors == null) {
+            throw new NullPointerException("Null processors");
+        }
+
+        int len = processors.length;
+        if (len == 0) {
+            throw new IllegalArgumentException("No processors");
+        }
+
+        Flow last = Flow.of(processors[len - 1]);
+        for (int i = len - 2; i >= 0; i--) {
+            last = Flow.of(processors[i]).egress(last);
+        }
+        return last;
+    }
+
+    /**
      * Creates a new flow, connecting the default egress of this flow with another flow.
      *
      * @param subFlow an egress flow called when an egress is requested

@@ -1,10 +1,29 @@
 package org.objectstyle.flow;
 
 import org.junit.jupiter.api.Test;
+import org.objectstyle.flow.runner.FlowRunner;
+import org.objectstyle.flow.test.FlowTester;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FlowTest {
+
+    private static final StepProcessor<Object> doNothing = (i, c) -> {/* */};
+
+    @Test
+    public void testOfSequence_One() {
+        Flow f = Flow.ofSequence(doNothing);
+        assertEquals("", FlowTester.flatten(f));
+    }
+
+    @Test
+    public void testOfSequence() {
+        Flow f = Flow.ofSequence(
+                (StringBuilder i, StepContext c) -> c.proceed(i.append("one,")),
+                (StringBuilder i, StepContext c) -> c.proceed(i.append("two,")),
+                (StringBuilder i, StepContext c) -> c.proceed(i.append("three")));
+        assertEquals("one,two,three", FlowRunner.of(f).run(new StringBuilder()).toString());
+    }
 
     @Test
     public void testEgress_Immutable() {
@@ -23,7 +42,7 @@ public class FlowTest {
 
     @Test
     public void testAccept() {
-        StepProcessor<Object> doNothing = (i, c) -> {/* */};
+
         Flow f31 = Flow.of(doNothing);
         Flow f21 = Flow.of(doNothing).egress("f31", f31);
         Flow f22 = Flow.of(doNothing);
@@ -40,7 +59,6 @@ public class FlowTest {
 
     @Test
     public void testAccept_TerminateSubtree() {
-        StepProcessor<Object> doNothing = (i, c) -> {/* */};
         Flow f31 = Flow.of(doNothing);
         Flow f21 = Flow.of(doNothing).egress("f31", f31);
         Flow f22 = Flow.of(doNothing);
