@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FlowReplaceTest {
 
-    private static final StepProcessor<Object> doNothing = (i, c) -> {/* */};
+    private static final StepProcessor<?> doNothing = c -> {/* */};
     private static final Flow replacement = Flow.of(doNothing).egress("r", doNothing);
 
     private Flow testFlow() {

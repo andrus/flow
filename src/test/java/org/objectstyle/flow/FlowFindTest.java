@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FlowFindTest {
 
-    private static StepProcessor<Object> doNothing() {
-        return (i, c) -> {/* */};
+    private static StepProcessor doNothing() {
+        return c -> {/* */};
     }
 
     private static final Flow f31 = Flow.of(doNothing());

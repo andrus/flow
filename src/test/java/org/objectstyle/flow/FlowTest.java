@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FlowTest {
 
-    private static final StepProcessor<Object> doNothing = (i, c) -> {/* */};
+    private static final StepProcessor<?> doNothing = c -> {/* */};
 
     @Test
     public void testOfSequence_One() {
@@ -19,24 +19,24 @@ public class FlowTest {
     @Test
     public void testOfSequence() {
         Flow f = Flow.ofSequence(
-                (StringBuilder i, StepContext c) -> c.proceed(i.append("one,")),
-                (StringBuilder i, StepContext c) -> c.proceed(i.append("two,")),
-                (StringBuilder i, StepContext c) -> c.proceed(i.append("three")));
+                (StepContext<StringBuilder> c) -> c.proceed(c.getInput().append("one,")),
+                (StepContext<StringBuilder> c) -> c.proceed(c.getInput().append("two,")),
+                (StepContext<StringBuilder> c) -> c.proceed(c.getInput().append("three")));
         assertEquals("one,two,three", FlowRunner.of(f).run(new StringBuilder()).toString());
     }
 
     @Test
     public void testEgress_Immutable() {
-        Flow f1 = Flow.of((i, c) -> c.proceed(i));
-        Flow f2 = Flow.of((i, c) -> c.proceed(i));
+        Flow f1 = Flow.of(c -> c.proceed(c.getInput()));
+        Flow f2 = Flow.of(c -> c.proceed(c.getInput()));
         Flow f3 = f2.egress(f1);
         assertNotSame(f3, f2);
     }
 
     @Test
     public void testEgress() {
-        Flow f1 = Flow.of((i, c) -> c.proceed(i));
-        Flow f2 = Flow.of((i, c) -> c.proceed(i)).egress(f1);
+        Flow f1 = Flow.of(c -> c.proceed(c.getInput()));
+        Flow f2 = Flow.of(c -> c.proceed(c.getInput())).egress(f1);
         assertSame(f1, f2.getEgress(FlowPath.DEFAULT_EGRESS));
     }
 

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FlowInsertTest {
 
-    private static final StepProcessor<Object> doNothing = (i, c) -> {/* */};
+    private static final StepProcessor<?> doNothing = c -> {/* */};
 
     private Flow testFlow() {
         Flow f31 = Flow.of(doNothing);

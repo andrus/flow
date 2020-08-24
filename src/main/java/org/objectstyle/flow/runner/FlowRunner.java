@@ -28,20 +28,20 @@ public class FlowRunner {
 
     // TODO: return result object with metrics and attributes
     public <T> T run(Object input) {
-        DefaultStepContext context = new DefaultStepContext(startAttributes);
-        return (T) runOne(flow, input, context);
+        DefaultStepContext<?> context = new DefaultStepContext<>(input, startAttributes);
+        return (T) runOne(flow, context);
     }
 
-    protected Object runOne(Flow flow, Object input, DefaultStepContext context) {
+    protected <T> Object runOne(Flow flow, DefaultStepContext<T> context) {
         StepProcessor processor = flow.getProcessor();
-        processor.run(input, context);
+        processor.run(context);
         String egress = context.getEgressName();
 
         // TODO: StepProcessor should define a set of supported egress names (including the default), so that we can
         //  tell the difference between a wrong name and no routing
         Flow nextStep = flow.getEgress(egress);
         return (nextStep != null)
-                ? runOne(nextStep, context.getOutput(), context.newWithClonedAttributes())
+                ? runOne(nextStep, context.forNextStep())
                 : context.getOutput();
     }
 }

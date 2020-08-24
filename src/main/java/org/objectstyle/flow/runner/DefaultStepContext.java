@@ -8,20 +8,28 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class DefaultStepContext implements StepContext {
+public class DefaultStepContext<INPUT> implements StepContext<INPUT> {
 
+    private INPUT input;
     private Object output;
     private String egressName;
     private Map<String, Object> attributes;
 
-    public DefaultStepContext(Map<String, Object> attributes) {
+    public DefaultStepContext(INPUT input, Map<String, Object> attributes) {
+        this.input = input;
+
         // clone the map, as the context is mutable
         this.attributes = new HashMap<>(attributes);
         this.egressName = FlowPath.DEFAULT_EGRESS;
     }
 
-    public DefaultStepContext newWithClonedAttributes() {
-        return new DefaultStepContext(attributes);
+    @Override
+    public INPUT getInput() {
+        return input;
+    }
+
+    public <T> DefaultStepContext<T> forNextStep() {
+        return new DefaultStepContext<>((T) output, attributes);
     }
 
     @Override
